@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* custom scroll bar */
+.cc-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+.cc-scrollbar::-webkit-scrollbar-track {
+  background: #495054cd;
+}
+
+/* Handle */
+.cc-scrollbar::-webkit-scrollbar-thumb {
+  background: #7d96b4a6;
+  border-radius: 16px;
+  cursor: default;
+}
+
+/* Handle on hover */
+.cc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #131821cd;
+}
