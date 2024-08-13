@@ -16,6 +16,9 @@ type Props = {
 const Survey = ({ data }: Props) => {
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [questionNavigation, setQuestionNavigation] = useState<string[]>([]);
+
+  console.log('🚀 ~ file: Survey.tsx:20 ~ Survey ~ questionNavigation:', questionNavigation);
+
   const [questionRes, setQuestionsRes] = useState<SurveyResponse>({});
 
   useEffect(() => {
@@ -48,7 +51,9 @@ const Survey = ({ data }: Props) => {
   };
 
   const handlePreviousQuestion = () => {
-    const prevQuestionId = questionNavigation[questionNavigation.length - 2];
+    const currentQuestionIndex = questionNavigation.indexOf(currentQuestion) - 1;
+
+    const prevQuestionId = questionNavigation[currentQuestionIndex];
 
     setCurrentQuestion(prevQuestionId);
   };
