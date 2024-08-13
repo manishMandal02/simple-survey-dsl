@@ -191,14 +191,14 @@ const SurveyJSON = ({ loadSurvey }: Props) => {
           onClick={handleResetJSON}
           className='text-slate-300/70 bg-slate-600 rounded px-6 py-1.5 text-[16px] font-medium hover:opacity-95 transition-colors duration-200'
         >
-          Reset
+          Load Sample JSON
         </button>
         <button
           disabled={isValidJSON === false}
           onClick={handleParseJSON}
           className='text-slate-700/90 bg-emerald-500 rounded px-6 py-1.5 text-[16px] font-medium hover:opacity-95 transition-colors duration-200 disabled:bg-slate-600 disabled:text-slate-300'
         >
-          Parse & Load
+          Parse & Load Survey
         </button>
       </div>
     </div>

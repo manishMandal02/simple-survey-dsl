@@ -3,48 +3,151 @@ import { z } from 'zod';
 const AnswerTypes = ['option', 'number', 'string'] as const;
 
 export const ParserErrorMessage = {
-  goto: 'All goto statements must route to a valid question',
+  goto: 'Invalid goto route or missing route to a question',
   condition: 'Invalid condition',
   question: 'Invalid question',
   answer: 'Invalid answer',
   title: 'Invalid title'
 };
 
-const AnswerSchema = z.object({
-  id: z.string().min(1, { message: ParserErrorMessage.answer }),
-  type: z.enum(AnswerTypes, { message: 'Invalid answer type' }),
-  label: z.string(),
-  goto: z.string().optional(),
-  end: z.boolean().optional()
-});
+const AnswerSchema = z
+  .object({
+    id: z.string().min(1, { message: ParserErrorMessage.answer }),
+    type: z.enum(AnswerTypes, { message: 'Invalid answer type' }),
+    label: z.string(),
+    goto: z.string().optional(),
+    end: z.boolean().optional()
+  })
+  .refine(
+    data => {
+      // checks that a goto or an end statement is added to each option or user input (string)
+      const hasRouteStatement = data?.goto || data?.end;
+
+      if (data.type === 'option' || data.type === 'string') {
+        if (!hasRouteStatement) {
+          return false;
+        }
+      }
+
+      // goto/end should not co-exists
+      if (data?.goto && data?.end) {
+        return false;
+      }
+
+      return true;
+    },
+    { message: ParserErrorMessage.answer }
+  );
 
 export const ConditionOperators = ['lt', 'lte', 'gt', 'gte', 'eq'];
 
 const ConditionSchema = z
   .object({
-    goto: z.string(),
+    goto: z.string().optional(),
     end: z.boolean().optional()
   })
-  .and(z.record(z.string()))
+  .and(z.record(z.string(), z.string().or(z.boolean())))
   .refine(
     data => {
-      const operators = Object.keys(data).filter(key => ConditionOperators.includes(key));
+      const keys = Object.keys(data);
+      // checks that 1 conditional operator is used
+      const operators = keys.filter(key => ConditionOperators.includes(key));
+      // must goto/end statement per conditions
+      const hasRouteStatement = keys.includes('goto') || keys.includes('end');
 
-      return operators.length === 1;
+      // goto/end should not co-exists
+      if (keys.includes('goto') && keys.includes('end')) {
+        return false;
+      }
+
+      return operators.length === 1 && hasRouteStatement;
     },
 
     { message: ParserErrorMessage.condition }
   );
 
-const QuestionSchema = z.object({
-  id: z.string().min(1, { message: ParserErrorMessage.question }),
-  multiselect: z.boolean().optional(),
-  question: z
-    .string({ message: ParserErrorMessage.question })
-    .min(3, { message: ParserErrorMessage.question }),
-  answer: z.array(AnswerSchema).min(1, { message: ParserErrorMessage.answer }),
-  conditions: z.array(ConditionSchema).min(1, { message: ParserErrorMessage.condition }).optional()
-});
+const QuestionSchema = z
+  .object({
+    id: z
+      .string()
+      .min(1, { message: ParserErrorMessage.question })
+      .refine(id => id !== 'end', { message: ParserErrorMessage.question }),
+    multiselect: z.boolean().optional(),
+    question: z
+      .string({ message: ParserErrorMessage.question })
+      .min(3, { message: ParserErrorMessage.question }),
+    answer: z.array(AnswerSchema).min(1, { message: ParserErrorMessage.answer }),
+
+    conditions: z.array(ConditionSchema).min(1, { message: ParserErrorMessage.condition }).optional()
+  })
+  .refine(
+    data => {
+      // checks that goto does not route to self question
+      const allGOTO: string[] = [];
+
+      data.answer.forEach(ans => {
+        if (!ans.goto) return;
+        allGOTO.push(ans.goto);
+      });
+      data.conditions?.forEach(cnd => {
+        if (!cnd.goto) return;
+
+        allGOTO.push(cnd.goto);
+      });
+
+      return !allGOTO.includes(data.id);
+    },
+    { message: ParserErrorMessage.goto }
+  )
+  .refine(
+    data => {
+      // checks that condition statements are only added to user input type number
+      if (data?.conditions && data.answer[0].type !== 'number') {
+        return false;
+      }
+
+      // making sure questions with conditional statement do not have route statement in answer
+      if (data.conditions) {
+        for (const ans of data.answer) {
+          if (ans.goto || ans.end) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    },
+    {
+      message: ParserErrorMessage.condition
+    }
+  )
+
+  .refine(
+    data => {
+      // checks that a multiselect questions have same route statement
+      if (data.multiselect) {
+        const allGOTO = data.answer.filter(ans => ans.goto)?.map(ans => ans.goto);
+
+        console.log('🚀 ~ file: useSurveyParser.ts:99 ~ allGOTO:', allGOTO);
+
+        const allEND = data.answer.filter(ans => ans.end);
+
+        console.log('🚀 ~ file: useSurveyParser.ts:101 ~ allEND:', allEND);
+
+        if (allGOTO.length !== data.answer.length && allEND.length !== data.answer.length) {
+          return false;
+        }
+
+        // checks if all the goto statement are same
+        if (allGOTO.length > 1 && allGOTO.some(v => v !== allGOTO[0])) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+    { message: ParserErrorMessage.answer }
+  );
 
 export type SurveyQuestion = z.infer<typeof QuestionSchema>;
 
@@ -55,14 +158,16 @@ const SurveySchema = z
   })
   .refine(
     data => {
-      // TODO - must goto statement for options
-      // TODO - must goto statement for user input string option
-      //TODO -  condition statement only allowed for user input number
-      // TODO - condition check only against number
-      // TODO - must goto statement for conditions (number input)
-      // TODO - multi select options should have same goto route
-      // TODO - goto and end statements should not co-exists
-      // TODO - question name should not be equal "end"
+      //  must goto statement for options
+      //  must goto/end statement for user input string option
+      // condition statement only allowed for user input number
+      //  must goto/end statement for conditions (number input)
+      // multi select options should have same goto route
+      //  goto and end statements should not co-exists
+      //  question id should not be equal "end"
+      // all goto statements must route to a valid question
+      // Questions with conditional statements must not have route statement in answer
+      // Goto statements should not route to self question
 
       // match all goto routes
       const gotoStatements: string[] = [];
@@ -79,13 +184,17 @@ const SurveySchema = z
           if (c.goto) {
             gotoStatements.push(c.goto);
           }
-          // TODO - match conditional statements for (string and array data.questions type)
         });
       }
 
       const matchedStatements = data.questions.filter(q => gotoStatements.includes(q.id));
 
-      if (matchedStatements.length === gotoStatements.length) {
+      console.log('🚀 ~ file: useSurveyParser.ts:149 ~ matchedStatements:', matchedStatements);
+
+      if (
+        matchedStatements.length === data.questions.length ||
+        matchedStatements.length === data.questions.length - 1
+      ) {
         return true;
       } else {
         return false;

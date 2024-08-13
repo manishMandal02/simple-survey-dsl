@@ -6,7 +6,7 @@ type UseSurveyProps = {
   currentQuestion: string;
 };
 
-const validateNumberConditions = (condition: Record<string, string>, res: number) => {
+const validateNumberConditions = (condition: Record<string, string | boolean>, res: number) => {
   const conditionKeys = Object.keys(condition);
 
   switch (true) {
@@ -50,7 +50,7 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
           const success = validateNumberConditions(condition, Number(response[question.id][0]));
 
           if (success) {
-            nextQuestion = condition?.end ? 'end' : condition.goto;
+            nextQuestion = condition.goto || 'end';
             break;
           }
         }
