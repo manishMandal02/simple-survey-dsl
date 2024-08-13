@@ -5,6 +5,7 @@ import { cn } from '../../utils/cn';
 import { isJSON } from '../../utils/validate-json';
 import sampleSurveyJSON from '../../../public/sample-survey.json';
 import { SurveyData, useSurveyParser } from './useSurveyParser';
+import { useRecursiveParse } from './useRecursiveParser';
 
 type Props = {
   loadSurvey: (data: SurveyData) => void;
@@ -19,6 +20,8 @@ const SurveyJSON = ({ loadSurvey }: Props) => {
   }, []);
 
   const { praseSurveyJSON } = useSurveyParser();
+
+  const { recursiveParser } = useRecursiveParse();
 
   const handleJSONInputChange = (value: string) => {
     setJSONInputValue(value);
@@ -37,7 +40,8 @@ const SurveyJSON = ({ loadSurvey }: Props) => {
   };
 
   const handleParseJSON = () => {
-    const [data, err] = praseSurveyJSON(JSON.parse(jsonInputValue));
+    // const [data, err] = praseSurveyJSON(JSON.parse(jsonInputValue));
+    const [data, err] = recursiveParser(JSON.parse(jsonInputValue));
 
     if (err) {
       setParserError(err);
@@ -61,9 +65,8 @@ const SurveyJSON = ({ loadSurvey }: Props) => {
         formatOnBlur
         autosize
         minRows={6}
-        // maxRows={32}
         maxRows={28}
-        className='w-full h-fit relative overflow-hidden'
+        className='w-full h-[90%] relative overflow-hidden'
         styles={{
           input: {
             height: '100% !important'
@@ -108,14 +111,14 @@ const SurveyJSON = ({ loadSurvey }: Props) => {
         ) : null}
         <button
           onClick={handleResetJSON}
-          className='text-slate-300/70 bg-slate-600 rounded px-6 py-1.5 text-[16px] font-medium hover:opacity-95 transition-colors duration-200'
+          className='text-slate-300/70 bg-slate-600 rounded px-6 py-2 text-[12.5px] font-medium hover:opacity-95 transition-colors duration-200'
         >
           Load Sample JSON
         </button>
         <button
           disabled={isValidJSON === false}
           onClick={handleParseJSON}
-          className='text-slate-700/90 bg-emerald-500 rounded px-6 py-1.5 text-[16px] font-medium hover:opacity-95 transition-colors duration-200 disabled:bg-slate-600 disabled:text-slate-300'
+          className='text-slate-700/90 bg-emerald-500 rounded px-6 py-2 text-[12.5px] font-medium hover:opacity-95 transition-colors duration-200 disabled:bg-slate-600 disabled:text-slate-300'
         >
           Parse & Load Survey
         </button>

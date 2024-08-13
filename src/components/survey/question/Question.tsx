@@ -4,29 +4,41 @@ import { cn } from '../../../utils/cn';
 import { SurveyResponse } from '../Survey';
 import { SurveyQuestion } from '../../survey-json';
 import { useEffect, useMemo, useState } from 'react';
+import Button from '../../elements';
 
 type Props = {
   data: SurveyQuestion;
   currentQuestion: string;
   index: number;
+  response: string[];
   onNextClick: (res: SurveyResponse) => void;
   onPrevClick: () => void;
 };
-const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick }: Props) => {
+const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, response }: Props) => {
   const [useInput, setUserInput] = useState('');
   const [userInputError, setUserInputError] = useState('');
 
   const [selectedOption, setSelectedOptions] = useState<string[]>([]);
 
-  useEffect(() => {
-    setUserInput('');
-    setUserInputError('');
-    setSelectedOptions([]);
-  }, [data]);
-
   const isAnswerUserInput = useMemo(() => {
     return data.answer.length < 2;
   }, [data.answer]);
+
+  useEffect(() => {
+    if (!response) {
+      setUserInput('');
+      setUserInputError('');
+      setSelectedOptions([]);
+      return;
+    }
+
+    if (isAnswerUserInput) {
+      setUserInput(response[0]);
+      return;
+    } else {
+      setSelectedOptions(response);
+    }
+  }, [currentQuestion, response, isAnswerUserInput]);
 
   const handleNextClick = () => {
     let response: SurveyResponse | null = null;
@@ -105,23 +117,15 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick }: Pr
 
       {/* action btn */}
       <div className='mt-12 flex items-center justify-center gap-x-3'>
-        {index > 1 ? (
-          <button
-            onClick={onPrevClick}
-            className='bg-gray-400 w-fit px-6 py-1.5  rounded text-[15px] text-slate-800/90 font-medium tracking-wide hover:opacity-90 transition-opacity duration-300'
-          >
-            Back
-          </button>
-        ) : null}
-        <button
+        {index > 1 ? <Button type='secondary' label='Back' onClick={onPrevClick} /> : null}
+
+        <Button
+          label='Next'
+          onClick={handleNextClick}
           disabled={
             (isAnswerUserInput && useInput.length < 1) || (!isAnswerUserInput && selectedOption.length < 1)
           }
-          onClick={handleNextClick}
-          className='bg-emerald-400/90 w-fit px-6 py-1.5  rounded text-[15px] text-slate-800/80 font-medium tracking-wide hover:opacity-90 transition-opacity duration-300 disabled:bg-slate-500 disabled:text-slate-300 disabled:cursor-default disabled:hover:opacity-100'
-        >
-          Next
-        </button>
+        />
       </div>
     </div>
   );

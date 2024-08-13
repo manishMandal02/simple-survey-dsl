@@ -1,36 +1,33 @@
 import { useState } from 'react';
 
 import { SurveyResponse } from './Survey';
+import Button from '../elements';
 
 type Props = {
   result: SurveyResponse;
+  onRetakeClick: () => void;
 };
 
-const SurveyResult = ({ result }: Props) => {
-  console.log('🚀 ~ file: SurveyResult.tsx:12 ~ SurveyResult ~ result:', result);
-
+const SurveyResult = ({ result, onRetakeClick }: Props) => {
   const [showResult, setShowResult] = useState(false);
   const handleShowResult = () => {
     setShowResult(true);
   };
   return (
-    <div className='w-full '>
-      <div className='mt-12 flex flex-col items-center justify-center'>
+    <div className='w-full'>
+      <div className='mt-10 flex flex-col items-center justify-center'>
         {!showResult ? (
           <>
             <h2 className='text-center text-[22px] text-slate-600 flex flex-col'>
               🎉 Survey Completed 🎉
               <span className='text-[16px] font-light mt-2'>Thank you for your time!</span>
             </h2>
-            <button
-              onClick={handleShowResult}
-              className='mt-6 text-slate-800/90 tracking-wide  bg-emerald-400/90 px-6 py-1.5 rounded'
-            >
-              View Result
-            </button>
+            <Button onClick={handleShowResult} label='View Result' />
           </>
         ) : (
-          <div className='-mt-14'>
+          <div className='-mt-16 flex flex-col'>
+            <p className='text-center text-[16px] font-light text-slate-700'>Result</p>
+            <hr className='h-[1px] mt-1 mb-3 border-none bg-slate-200/80 rounded-md w-[35%]  mx-auto' />
             {[...Object.keys(result)].map((res, idx) => (
               <div
                 key={res}
@@ -54,6 +51,7 @@ const SurveyResult = ({ result }: Props) => {
                 </div>
               </div>
             ))}
+            <Button onClick={onRetakeClick} label='Try Again' classes='mx-auto' />
           </div>
         )}
       </div>

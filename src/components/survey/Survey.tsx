@@ -4,6 +4,7 @@ import { useSurvey } from './useSurvey';
 import SurveyResult from './SurveyResult';
 import Question from './question/Question';
 import { SurveyData } from '../survey-json';
+import Button from '../elements';
 
 export type SurveyResponse = {
   [key: string]: string[];
@@ -15,15 +16,19 @@ type Props = {
 
 const Survey = ({ data }: Props) => {
   const [currentQuestion, setCurrentQuestion] = useState('');
-  const [questionNavigation, setQuestionNavigation] = useState<string[]>([]);
 
-  console.log('🚀 ~ file: Survey.tsx:20 ~ Survey ~ questionNavigation:', questionNavigation);
+  const [questionNavigation, setQuestionNavigation] = useState<string[]>([]);
 
   const [questionRes, setQuestionsRes] = useState<SurveyResponse>({});
 
-  useEffect(() => {
+  const handleResetSurvey = () => {
     setCurrentQuestion('');
+    setQuestionNavigation([]);
     setQuestionsRes({});
+  };
+
+  useEffect(() => {
+    handleResetSurvey();
   }, [data]);
 
   const { getNextQuestion, mapResponseToData } = useSurvey({ data, currentQuestion });
@@ -61,16 +66,10 @@ const Survey = ({ data }: Props) => {
   return (
     <div className='w-full h-full max-h-[100%] flex flex-col items-center overflow-y-auto'>
       {/* survey start */}
-      <div className='mt-16'>
-        <h2 className='text-center text-[20px] text-slate-600 font-light'>{data.title}</h2>
-        {!currentQuestion ? (
-          <button
-            onClick={handleStartSurvey}
-            className='bg-emerald-400/90 text-slate-800/90 font-medium mt-12 px-10 py-1.5 rounded transition-opacity duration-200 hover:opacity-95 '
-          >
-            Start Survey
-          </button>
-        ) : null}
+      <div className='mt-12'>
+        <h2 className='text-center text-[22px] text-slate-600/80 tracking-wide'>{data.title}</h2>
+        <hr className='h-[1px] mt-2 mb-3 border-none bg-slate-200/60 rounded-md w-[100%]  mx-auto' />
+        {!currentQuestion ? <Button label='Start Survey' onClick={handleStartSurvey} /> : null}
       </div>
       <div className='relative mt-10 w-full flex items-center justify-center'>
         {data.questions.map((question, idx) => (
@@ -78,6 +77,7 @@ const Survey = ({ data }: Props) => {
             key={question.id}
             data={question}
             index={idx + 1}
+            response={questionRes[question.id]}
             currentQuestion={currentQuestion}
             onNextClick={handleNextQuestion}
             onPrevClick={handlePreviousQuestion}
@@ -86,7 +86,9 @@ const Survey = ({ data }: Props) => {
       </div>
 
       {/* survey end */}
-      {currentQuestion === 'end' ? <SurveyResult result={mapResponseToData(questionRes)} /> : null}
+      {currentQuestion === 'end' ? (
+        <SurveyResult result={mapResponseToData(questionRes)} onRetakeClick={handleResetSurvey} />
+      ) : null}
     </div>
   );
 };

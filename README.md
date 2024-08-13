@@ -1,6 +1,6 @@
 ### Simple Survey DSL
 
-Sample JSON survey file => [public/sample-survey.json](https://github.com/manishMandal02/simple-survey-dsl/blob/main/public/simple-survey.json)
+Sample JSON survey file => [public/sample-survey.json](https://github.com/manishMandal02/simple-survey-dsl/blob/main/public/sample-survey.json)
 
 ### Parser Rules
 
@@ -58,7 +58,7 @@ Sample JSON survey file => [public/sample-survey.json](https://github.com/manish
 
 ```ts
 {
-  ['gt'  |  'gte' | 'lt' |  'lte' | 'eq']: string;
+  ['gt' | 'gte'|'lt'| 'lte'|'eq']: string;
   goto?: string;
   end?: boolean
 }
@@ -124,4 +124,4 @@ pnpm run dev
 
 <hr style="height:3px; border:none; background-color:#2e2e2e;" />
 
-> [manishmandal.com](https://manishmandal.com) • <span style="opacity:0.6;">GitHub </span> [@manishMandal02](https://github.com/manishMandal02) • <span style="opacity:0.6;">X</span> [@manishMandalJ](https://twitter.com/manishMandalJ) • [LinkedIn](https://twitter.com/manishMandalJ)
+> [manishmandal.com](https://manishmandal.com) • <span style="opacity:0.6;">GitHub </span> [@manishMandal02](https://github.com/manishMandal02) • <span style="opacity:0.6;">X</span> [@manishMandalJ](https://twitter.com/manishMandalJ) • [LinkedIn](https://www.linkedin.com/in/manish-mandal/)

@@ -158,8 +158,6 @@ const SurveySchema = z
   })
   .refine(
     data => {
-    
-
       // match all goto routes
       const gotoStatements: string[] = [];
 
