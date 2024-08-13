@@ -1,0 +1,81 @@
+{
+  "title": "Sample Survey",
+  "questions": [
+    {
+      "id": "age",
+      "question": "What is your age?",
+      "answer": [
+        {
+          "id": "age",
+          "type": "number",
+          "label": "24"
+        }
+      ],
+      "conditions": [
+        {
+          "gte": "18",
+          "goto": "ai-usage"
+        },
+        {
+          "lt": "18",
+          "goto": "student"
+        }
+      ]
+    },
+    {
+      "id": "ai-usage",
+      "question": "Does your company use AI for market research?",
+      "answer": [
+        {
+          "id": "yes",
+          "type": "option",
+          "label": "Yes",
+          "goto": "ai-apps"
+        },
+        {
+          "id": "no",
+          "type": "option",
+          "label": "No",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "student",
+      "question": "What is your use case of our product?",
+      "multiselect": true,
+      "answer": [
+        {
+          "id": "research",
+          "type": "option",
+          "label": "Project Research",
+          "end": true
+        },
+        {
+          "id": "casual-usage",
+          "type": "option",
+          "label": "Just wanna try it.",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "ai-apps",
+      "question": "What ai apps do you use at your company?",
+      "answer": [
+        {
+          "id": "chatgpt",
+          "type": "option",
+          "label": "Chat GPT",
+          "end": true
+        },
+        {
+          "id": "claude",
+          "type": "option",
+          "label": "Claude",
+          "end": true
+        }
+      ]
+    }
+  ]
+}

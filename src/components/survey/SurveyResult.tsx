@@ -11,7 +11,6 @@ const SurveyResult = ({ result }: Props) => {
 
   const [showResult, setShowResult] = useState(false);
   const handleShowResult = () => {
-    // TODO: show result
     setShowResult(true);
   };
   return (

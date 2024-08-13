@@ -158,16 +158,7 @@ const SurveySchema = z
   })
   .refine(
     data => {
-      //  must goto statement for options
-      //  must goto/end statement for user input string option
-      // condition statement only allowed for user input number
-      //  must goto/end statement for conditions (number input)
-      // multi select options should have same goto route
-      //  goto and end statements should not co-exists
-      //  question id should not be equal "end"
-      // all goto statements must route to a valid question
-      // Questions with conditional statements must not have route statement in answer
-      // Goto statements should not route to self question
+    
 
       // match all goto routes
       const gotoStatements: string[] = [];
