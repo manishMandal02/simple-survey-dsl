@@ -18,7 +18,7 @@ const AnswerSchema = z.object({
   end: z.boolean().optional()
 });
 
-const ConditionOperators = ['lt', 'lte', 'gt', 'gte', 'eq', 'contains'];
+export const ConditionOperators = ['lt', 'lte', 'gt', 'gte', 'eq'];
 
 const ConditionSchema = z
   .object({
@@ -38,6 +38,7 @@ const ConditionSchema = z
 
 const QuestionSchema = z.object({
   id: z.string().min(1, { message: ParserErrorMessage.question }),
+  multiselect: z.boolean().optional(),
   question: z
     .string({ message: ParserErrorMessage.question })
     .min(3, { message: ParserErrorMessage.question }),
@@ -54,7 +55,14 @@ const SurveySchema = z
   })
   .refine(
     data => {
-      // TODO - required end statement
+      // TODO - must goto statement for options
+      // TODO - must goto statement for user input string option
+      //TODO -  condition statement only allowed for user input number
+      // TODO - condition check only against number
+      // TODO - must goto statement for conditions (number input)
+      // TODO - multi select options should have same goto route
+      // TODO - goto and end statements should not co-exists
+      // TODO - question name should not be equal "end"
 
       // match all goto routes
       const gotoStatements: string[] = [];
@@ -91,8 +99,6 @@ export type SurveyData = z.infer<typeof SurveySchema>;
 export const useSurveyParser = () => {
   const praseSurveyJSON = (surveyData: JSON): [SurveyData | null, string[] | null] => {
     const res = SurveySchema.safeParse(surveyData);
-
-    console.log('🚀 ~ file: SurveyInput.tsx:107 ~ handleParseJSON ~ res:', res);
 
     if (res.success) {
       console.log('parsed success ✅', res.data);

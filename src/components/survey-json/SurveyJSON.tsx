@@ -9,7 +9,7 @@ const sampleSurveyJSON = {
   title: 'Sample Survey',
   questions: [
     {
-      id: 'name',
+      id: 'age',
       question: 'What is your age?',
       answer: [
         {
@@ -50,6 +50,7 @@ const sampleSurveyJSON = {
     {
       id: 'student',
       question: 'What is your use case of our product?',
+      multiselect: true,
       answer: [
         {
           id: 'research',
@@ -96,10 +97,6 @@ const SurveyJSON = ({ loadSurvey }: Props) => {
 
   useEffect(() => {
     setJSONInputValue(JSON.stringify(sampleSurveyJSON, null, 2));
-    console.log(
-      '🚀 ~ file: SurveyJSON.tsx:98 ~ useEffect ~ JSON.stringify(sampleSurveyJSON, null, 2):',
-      JSON.stringify(sampleSurveyJSON, null, 2)
-    );
   }, []);
 
   const { praseSurveyJSON } = useSurveyParser();

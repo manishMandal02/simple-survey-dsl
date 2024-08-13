@@ -28,6 +28,7 @@
   {
     "id": "ai-usage",
     "question": "Does your company use AI for market research?",
+    "multiselect": true,
     "answer": [
       {
         "id": "yes",
