@@ -7,11 +7,7 @@ type UseSurveyProps = {
 };
 
 const validateNumberConditions = (condition: Record<string, string>, res: number) => {
-  console.log('🚀 ~ file: useSurvey.ts:11 ~ validateNumberConditions ~ res:', res);
-
   const conditionKeys = Object.keys(condition);
-
-  console.log('🚀 ~ file: useSurvey.ts:12 ~ validateNumberConditions ~ conditionKeys:', conditionKeys);
 
   switch (true) {
     case conditionKeys.includes('lt'):
@@ -35,13 +31,9 @@ const validateNumberConditions = (condition: Record<string, string>, res: number
 
 export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
   const getNextQuestion = (response: SurveyResponse) => {
-    console.log('🚀 ~ file: useSurvey.ts:35 ~ getNextQuestion ~ response:', response);
-
     let nextQuestion = '';
 
     const question = data.questions.find(question => question.id === currentQuestion);
-
-    console.log('🚀 ~ file: useSurvey.ts:38 ~ getNextQuestion ~ question:', question);
 
     // user input option
     if (question && question?.answer.length < 2) {
@@ -57,8 +49,6 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
         for (const condition of question.conditions) {
           const success = validateNumberConditions(condition, Number(response[question.id][0]));
 
-          console.log('🚀 ~ file: useSurvey.ts:73 ~ getNextQuestion ~ success:', success);
-
           if (success) {
             nextQuestion = condition?.end ? 'end' : condition.goto;
             break;
@@ -70,8 +60,6 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
     if (question && question?.answer.length >= 2) {
       // options
       const selectedOption = question?.answer.find(option => option.id === response[question.id][0]);
-
-      console.log('🚀 ~ file: useSurvey.ts:62 ~ getNextQuestion ~ selectedOption:', selectedOption);
 
       nextQuestion = selectedOption?.goto || 'end';
     }

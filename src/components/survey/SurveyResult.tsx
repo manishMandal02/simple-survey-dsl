@@ -4,10 +4,9 @@ import { SurveyResponse } from './Survey';
 
 type Props = {
   result: SurveyResponse;
-  title: string;
 };
 
-const SurveyResult = ({ title, result }: Props) => {
+const SurveyResult = ({ result }: Props) => {
   console.log('🚀 ~ file: SurveyResult.tsx:12 ~ SurveyResult ~ result:', result);
 
   const [showResult, setShowResult] = useState(false);
@@ -16,7 +15,7 @@ const SurveyResult = ({ title, result }: Props) => {
     setShowResult(true);
   };
   return (
-    <div className='w-full max-h-[80%%] overflow-y-auto'>
+    <div className='w-full '>
       <div className='mt-12 flex flex-col items-center justify-center'>
         {!showResult ? (
           <>
@@ -33,20 +32,22 @@ const SurveyResult = ({ title, result }: Props) => {
           </>
         ) : (
           <div className='-mt-14'>
-            {/* <h1 className='text-[20px] font-light  text-center'>{title}</h1> */}
-            {[...Object.keys(result)].map(res => (
+            {[...Object.keys(result)].map((res, idx) => (
               <div
                 key={res}
                 className={
-                  'text-[16px] mb-3 bg-slate-100/50 min-w-[520px] w-fit px-5 pt-4 pb-4 rounded-md shadow-sm  shadow-slate- 300'
+                  ' mb-3 bg-slate-100/50 min-w-[500px] w-fit px-4 pt-4 pb-4 rounded-md shadow-sm  shadow-slate-400/70 max-w-[550px]'
                 }
               >
-                <p className='mb-2 text-slate-600 '>{res}</p>
+                <p className='mb-2 text-[16px] text-slate-700 '>
+                  <span className='mr-[2.5px] text-slate-500'>Q{idx + 1}.</span>
+                  {res}
+                </p>
                 <div className=' flex flex-col gap-y-2'>
                   {result[res].map(answer => (
                     <div
                       key={answer}
-                      className='bg-emerald-400/20 mb-px border border-emerald-400/10 rounded-md  w-full text-[16px] text-left px-3 py-2 leading-[1.45rem] max-w-[600px]'
+                      className='bg-emerald-400/20 mb-px border border-emerald-400/10 rounded-md  w-full text-[16px] text-slate-800/90 text-left px-3 py-[7px] leading-[1.45rem] max-w-[600px]'
                     >
                       {answer}
                     </div>

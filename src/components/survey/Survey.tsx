@@ -16,39 +16,45 @@ type Props = {
 const Survey = ({ data }: Props) => {
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [questionNavigation, setQuestionNavigation] = useState<string[]>([]);
-  const [response, setResponse] = useState<SurveyResponse>({});
+  const [questionRes, setQuestionsRes] = useState<SurveyResponse>({});
 
   useEffect(() => {
     setCurrentQuestion('');
-    setResponse({});
+    setQuestionsRes({});
   }, [data]);
 
   const { getNextQuestion, mapResponseToData } = useSurvey({ data, currentQuestion });
 
   const handleStartSurvey = () => {
     setCurrentQuestion(data.questions[0].id);
+    setQuestionNavigation([data.questions[0].id]);
   };
 
   const handleNextQuestion = (response: SurveyResponse) => {
-    const updatedResponse = response;
+    const updatedResponse = { ...questionRes };
 
     updatedResponse[currentQuestion] = response[currentQuestion];
 
-    setResponse(updatedResponse);
+    setQuestionsRes(updatedResponse);
 
     const nextQuestion = getNextQuestion(response);
 
     setCurrentQuestion(nextQuestion);
+
+    // do nothing is user navigation to same question form prev
+    if (questionNavigation[questionNavigation.length - 1] === nextQuestion) return;
+
     setQuestionNavigation([...questionNavigation, nextQuestion]);
   };
 
   const handlePreviousQuestion = () => {
     const prevQuestionId = questionNavigation[questionNavigation.length - 2];
+
     setCurrentQuestion(prevQuestionId);
   };
 
   return (
-    <div className='w-full flex flex-col items-center'>
+    <div className='w-full h-full max-h-[100%] flex flex-col items-center overflow-y-auto'>
       {/* survey start */}
       <div className='mt-16'>
         <h2 className='text-center text-[20px] text-slate-600 font-light'>{data.title}</h2>
@@ -75,9 +81,7 @@ const Survey = ({ data }: Props) => {
       </div>
 
       {/* survey end */}
-      {currentQuestion === 'end' ? (
-        <SurveyResult title={data.title} result={mapResponseToData(response)} />
-      ) : null}
+      {currentQuestion === 'end' ? <SurveyResult result={mapResponseToData(questionRes)} /> : null}
     </div>
   );
 };
