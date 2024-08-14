@@ -58,7 +58,7 @@ Sample JSON survey file => [public/sample-survey.json](https://github.com/manish
 
 ```ts
 {
-  ['gt' | 'gte'|'lt'| 'lte'|'eq']: string;
+  [key in 'gt' | 'gte'|'lt'| 'lte'|'eq']: string;
   goto?: string;
   end?: boolean
 }
