@@ -17,12 +17,12 @@ export interface Token {
 
 export type BaseValueType = string | number | boolean | Record<string, unknown> | unknown[] | null;
 
-export interface Survey {
+export interface ISurvey {
   title: string;
-  questions: Question[];
+  questions: IQuestion[];
 }
 
-export interface Question {
+export interface IQuestion {
   id: string;
   multiselect?: boolean;
   question: string;

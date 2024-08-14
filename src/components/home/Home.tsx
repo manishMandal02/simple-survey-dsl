@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Survey } from '../../types/parser.types';
-import SurveyView from '../survey-view';
-import { SurveyJson } from '../survey-json';
+import { ISurvey } from '../../types/parser.types';
+import { SurveyView } from '../survey-view';
+import SurveyJson from '../survey-json/SurveyJson';
 
 const Home = () => {
-  const [surveyData, setSurveyData] = useState<Survey>();
+  const [surveyData, setSurveyData] = useState<ISurvey>();
 
   return (
     <div className='flex overflow-hidden h-full flex-wrap'>

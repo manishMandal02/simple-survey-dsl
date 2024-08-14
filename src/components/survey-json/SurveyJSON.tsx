@@ -5,7 +5,7 @@ import { cn } from '../../utils/cn';
 import Snackbar from '../elements/Snackbar';
 import { useZodParser } from './useZodParser';
 import ActionsContainer from './ActionsContainer';
-import { Survey } from '../../types/parser.types';
+import { ISurvey } from '../../types/parser.types';
 import { isJSON } from '../../utils/validate-json';
 import { useRecursiveParse } from './useRecursiveParser';
 import { parseJsonFile } from '../../utils/parse-json-file';
@@ -14,7 +14,7 @@ import sampleSurveyJson from '../../../public/sample-survey.json';
 type Parser = 'Recursive Descent' | 'Zod';
 
 type Props = {
-  loadSurvey: (data: Survey) => void;
+  loadSurvey: (data: ISurvey) => void;
 };
 
 const SurveyJson = ({ loadSurvey }: Props) => {
@@ -54,7 +54,7 @@ const SurveyJson = ({ loadSurvey }: Props) => {
   const handleParseJson = (string?: string) => {
     const jsonString = string ?? jsonInputValue;
 
-    let data: Survey | null, err: string | null;
+    let data: ISurvey | null, err: string | null;
 
     if (selectedParser === 'Recursive Descent') {
       [data, err] = recursiveParser(jsonString);

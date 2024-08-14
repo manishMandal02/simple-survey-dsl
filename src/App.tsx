@@ -1,5 +1,5 @@
 import { MantineProvider } from '@mantine/core';
-import Home from './components/home';
+import Home from './components/home/Home';
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
         <nav className='w-full h-[6%] flex items-center justify-start px-8 shadow shadow-slate-800 '>
           <p className='text-slate-300/90 text-[18px] tracking-wide font-light select-none'>
             {' '}
-            Simple Survey DSL
+            Simple ISurvey DSL
           </p>
         </nav>
         <div className='h-[94%]'>

@@ -1,9 +1,8 @@
-import { SurveyData } from '../survey-json';
 import { SurveyResponse } from './SurveyView';
-import { Answer } from '../../types/parser.types';
+import { Answer, ISurvey } from '../../types/parser.types';
 
 type UseSurveyProps = {
-  data: SurveyData;
+  data: ISurvey;
   currentQuestion: string;
 };
 

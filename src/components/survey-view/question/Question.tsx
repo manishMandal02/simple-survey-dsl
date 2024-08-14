@@ -2,12 +2,12 @@ import Options from './Options';
 import UserInput from './UserInput';
 import { cn } from '../../../utils/cn';
 import { SurveyResponse } from '../SurveyView';
-import { SurveyQuestion } from '../../survey-json';
 import { useEffect, useMemo, useState } from 'react';
 import Button from '../../elements';
+import { IQuestion } from '../../../types/parser.types';
 
 type Props = {
-  data: SurveyQuestion;
+  data: IQuestion;
   currentQuestion: string;
   index: number;
   response: string[];

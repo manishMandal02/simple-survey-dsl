@@ -1,4 +1,4 @@
-import { Token, BaseValueType, Survey, Question } from '../../types/parser.types';
+import { Token, BaseValueType, ISurvey, IQuestion } from '../../types/parser.types';
 
 const tokenize = (input: string): Token[] => {
   const tokens: Token[] = [];
@@ -72,7 +72,7 @@ const tokenize = (input: string): Token[] => {
   return tokens;
 };
 
-const parse = (tokens: Token[]): Survey => {
+const parse = (tokens: Token[]): ISurvey => {
   let currentPos = 0;
 
   const getCurrentToken = () => tokens[currentPos];
@@ -85,7 +85,7 @@ const parse = (tokens: Token[]): Survey => {
     throw new Error(`Expected ${expectedType}`);
   };
 
-  const parseSurvey = (): Survey => {
+  const parseSurvey = (): ISurvey => {
     consume('LEFT_CURLY_BRACKET', '{');
     const title = parseKeyValuePair('title');
     consume('COMMA', ',');
@@ -100,9 +100,9 @@ const parse = (tokens: Token[]): Survey => {
       throw new Error('Questions must be an array');
     }
 
-    const survey: Survey = {
+    const survey: ISurvey = {
       title,
-      questions: questions as Question[]
+      questions: questions as IQuestion[]
     };
 
     return survey;
@@ -173,7 +173,7 @@ const parse = (tokens: Token[]): Survey => {
   return parseSurvey();
 };
 
-const validateSurvey = (survey: Survey) => {
+const validateSurvey = (survey: ISurvey) => {
   const questionIds = new Set<string>();
 
   // validate question's id and name
@@ -262,7 +262,7 @@ const validateSurvey = (survey: Survey) => {
 
 export const useRecursiveParse = () => {
   // recursive parser
-  const recursiveParser = (surveyData: string): [Survey | null, string | null] => {
+  const recursiveParser = (surveyData: string): [ISurvey | null, string | null] => {
     const tokens = tokenize(surveyData);
 
     try {

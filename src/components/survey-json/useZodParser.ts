@@ -1,6 +1,6 @@
 import { ConditionOperator, ConditionOperators } from './../../types/parser.types';
 import { z } from 'zod';
-import { Survey } from '../../types/parser.types';
+import { ISurvey } from '../../types/parser.types';
 
 const AnswerTypes = ['option', 'number', 'string'] as const;
 
@@ -28,7 +28,7 @@ const AnswerSchema = z
       if (data.type === 'option' || data.type === 'string') {
         if (!hasRouteStatement) {
           return false;
-        } 
+        }
       }
 
       // goto/end should not co-exists
@@ -189,11 +189,11 @@ const SurveySchema = z
 export type SurveyData = z.infer<typeof SurveySchema>;
 
 export const useZodParser = () => {
-  const zodParser = (surveyData: string): [Survey | null, string | null] => {
+  const zodParser = (surveyData: string): [ISurvey | null, string | null] => {
     const res = SurveySchema.safeParse(JSON.parse(surveyData));
 
     if (res.success) {
-      return [res.data as Survey, null];
+      return [res.data as ISurvey, null];
     } else {
       // get all errors/issues
       const issues = res.error.issues.map(err => err.message);

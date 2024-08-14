@@ -70,7 +70,7 @@ const ActionsContainer = ({
           onClick={resetJSON}
           classes='bg-slate-600/70 shadow-slate-800 text-slate-300/90 mr-3 py-2 '
         />
-        <Button label='Parse & Load Survey' disabled={isJSONValid === false} onClick={onParseClick} />
+        <Button label='Parse & Load ISurvey' disabled={isJSONValid === false} onClick={onParseClick} />
       </div>
     </div>
   );

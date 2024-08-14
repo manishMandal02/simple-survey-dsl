@@ -3,15 +3,15 @@ import { useEffect, useState } from 'react';
 import { useSurvey } from './useSurvey';
 import SurveyResult from './SurveyResult';
 import Question from './question/Question';
-import { SurveyData } from '../survey-json';
 import Button from '../elements';
+import { ISurvey } from '../../types/parser.types';
 
 export type SurveyResponse = {
   [key: string]: string[];
 };
 
 type Props = {
-  data: SurveyData;
+  data: ISurvey;
 };
 
 const SurveyView = ({ data }: Props) => {
@@ -70,7 +70,7 @@ const SurveyView = ({ data }: Props) => {
         <h2 className='text-center text-[20px] text-slate-600 font-light tracking-wide py-5'>{data.title}</h2>
         <hr className='h-[1px]  border-none bg-slate-200/80 rounded-md w-[100%]  mx-auto' />
       </div>
-      {!currentQuestion ? <Button label='Start Survey' onClick={handleStartSurvey} classes='mt-16' /> : null}
+      {!currentQuestion ? <Button label='Start ISurvey' onClick={handleStartSurvey} classes='mt-16' /> : null}
 
       {currentQuestion !== 'end' ? (
         <div className='relative mt-20 w-full flex items-center justify-center'>
