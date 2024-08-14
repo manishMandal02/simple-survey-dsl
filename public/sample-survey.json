@@ -1,39 +1,111 @@
 {
-  "title": "Sample Survey",
+  "title": "AI Usage Survey",
   "questions": [
+    {
+      "id": "user-type",
+      "question": "Are you a student or a professional?",
+      "answer": [
+        {
+          "id": "student",
+          "type": "option",
+          "label": "Student",
+          "goto": "age"
+        },
+        {
+          "id": "professional",
+          "type": "option",
+          "label": "Professional",
+          "goto": "experience"
+        }
+      ]
+    },
     {
       "id": "age",
       "question": "What is your age?",
       "answer": [
         {
-          "id": "age",
+          "id": "age-value",
           "type": "number",
-          "label": "24"
+          "label": "Your age"
         }
       ],
       "conditions": [
         {
           "gte": "18",
-          "goto": "ai-usage"
+          "goto": "student-level"
         },
         {
           "lt": "18",
-          "goto": "student"
+          "goto": "student-minor"
         }
       ]
     },
     {
-      "id": "ai-usage",
-      "question": "Does your company use AI for market research?",
+      "id": "student-level",
+      "question": "What is your current level of study?",
       "answer": [
         {
-          "id": "yes",
+          "id": "undergraduate",
           "type": "option",
-          "label": "Yes",
-          "goto": "ai-apps"
+          "label": "Undergraduate",
+          "goto": "undergraduate-major"
         },
         {
-          "id": "no",
+          "id": "postgraduate",
+          "type": "option",
+          "label": "Postgraduate",
+          "goto": "postgraduate-major"
+        }
+      ]
+    },
+    {
+      "id": "undergraduate-major",
+      "question": "What is your major?",
+      "answer": [
+        {
+          "id": "cs",
+          "type": "option",
+          "label": "Computer Science",
+          "end": true
+        },
+        {
+          "id": "eng",
+          "type": "option",
+          "label": "Engineering",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "postgraduate-major",
+      "question": "What is your major?",
+      "answer": [
+        {
+          "id": "mba",
+          "type": "option",
+          "label": "MBA",
+          "end": true
+        },
+        {
+          "id": "msc",
+          "type": "option",
+          "label": "MSc",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "student-minor",
+      "question": "As a minor, do you have parental consent?",
+      "answer": [
+        {
+          "id": "yes-consent",
+          "type": "option",
+          "label": "Yes",
+          "goto": "student-level"
+        },
+        {
+          "id": "no-consent",
           "type": "option",
           "label": "No",
           "end": true
@@ -41,38 +113,83 @@
       ]
     },
     {
-      "id": "student",
-      "question": "What is your use case of our product?",
-      "multiselect": true,
+      "id": "experience",
+      "question": "How many years of professional experience do you have?",
       "answer": [
         {
-          "id": "research",
-          "type": "option",
-          "label": "Project Research",
-          "end": true
+          "id": "experience-value",
+          "type": "number",
+          "label": "Your experience in years"
+        }
+      ],
+      "conditions": [
+        {
+          "gte": "5",
+          "goto": "expert-level"
         },
         {
-          "id": "casual-usage",
-          "type": "option",
-          "label": "Just wanna try it.",
-          "end": true
+          "lt": "5",
+          "goto": "beginner-level"
         }
       ]
     },
     {
-      "id": "ai-apps",
-      "question": "What ai apps do you use at your company?",
+      "id": "expert-level",
+      "question": "Are you comfortable with advanced AI tools?",
+      "answer": [
+        {
+          "id": "yes-ai",
+          "type": "option",
+          "label": "Yes",
+          "goto": "ai-tools"
+        },
+        {
+          "id": "no-ai",
+          "type": "option",
+          "label": "No",
+          "goto": "beginner-level"
+        }
+      ]
+    },
+    {
+      "id": "ai-tools",
+      "question": "Which AI tools do you use?",
+      "multiselect": true,
       "answer": [
         {
           "id": "chatgpt",
           "type": "option",
-          "label": "Chat GPT",
+          "label": "ChatGPT",
+          "end": true
+        },
+        {
+          "id": "bard",
+          "type": "option",
+          "label": "Bard",
           "end": true
         },
         {
           "id": "claude",
           "type": "option",
           "label": "Claude",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "beginner-level",
+      "question": "Would you like to receive resources for beginners?",
+      "answer": [
+        {
+          "id": "yes-resources",
+          "type": "option",
+          "label": "Yes",
+          "end": true
+        },
+        {
+          "id": "no-resources",
+          "type": "option",
+          "label": "No",
           "end": true
         }
       ]

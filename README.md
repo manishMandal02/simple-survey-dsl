@@ -7,14 +7,14 @@ Sample JSON survey file => [public/sample-survey.json](https://github.com/manish
 ---
 
 - All `goto` statements must route to a valid question id
-- `goto` statements should not route to self (question)
-- Must `goto` statement for options with option type as `option`
-- Must `goto` or `end` statement for option type as `string`
-- Condition statement only allowed for option type as `number`
-- Must `goto` or `end` statement for conditions
-- `Multi-select` options should have either same goto routes or end statement
-- `goto` amd `end` statements should not co-exists in
 - Question `id` should not be equal to `end`
+- `goto` statements should not route to self (question)
+- `route` statements should not co-exists in
+- Must `route` statement for conditions
+- Must `route` statement for option type as `string`
+- Must `route` `(goto/end)` statement for options with option type as `option`
+- Condition statement only allowed for option type as `number`
+- `Multi-select` options should have either `route` statements
 - Questions with `conditional statements` must not have route statement in options/answer
 
 ### Types

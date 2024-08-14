@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Survey } from '../../types/parser.types';
 
 const AnswerTypes = ['option', 'number', 'string'] as const;
 
@@ -194,22 +195,20 @@ const SurveySchema = z
 
 export type SurveyData = z.infer<typeof SurveySchema>;
 
-export const useSurveyParser = () => {
-  const praseSurveyJSON = (surveyData: JSON): [SurveyData | null, string[] | null] => {
-    const res = SurveySchema.safeParse(surveyData);
+export const useZodParser = () => {
+  const zodParser = (surveyData: string): [Survey | null, string | null] => {
+    const res = SurveySchema.safeParse(JSON.parse(surveyData));
 
     if (res.success) {
-      console.log('parsed success ✅', res.data);
-      return [res.data, null];
+      // console.log('parsed success ✅', res.data);
+      return [res.data as Survey, null];
     } else {
-      console.log('parsed failed ❌', res.error.issues);
+      // console.log('parsed failed ❌', res.error.issues);
 
       // get all errors/issues
-      let issues = res.error.issues.map(err => err.message);
-      // remove duplicate issues
-      issues = [...new Set(issues)].splice(0, 3);
-      return [null, issues];
+      const issues = res.error.issues.map(err => err.message);
+      return [null, issues[0]];
     }
   };
-  return { praseSurveyJSON };
+  return { zodParser };
 };

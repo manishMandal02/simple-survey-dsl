@@ -1,7 +1,7 @@
 import Options from './Options';
 import UserInput from './UserInput';
 import { cn } from '../../../utils/cn';
-import { SurveyResponse } from '../Survey';
+import { SurveyResponse } from '../SurveyView';
 import { SurveyQuestion } from '../../survey-json';
 import { useEffect, useMemo, useState } from 'react';
 import Button from '../../elements';
@@ -15,14 +15,12 @@ type Props = {
   onPrevClick: () => void;
 };
 const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, response }: Props) => {
-  const [useInput, setUserInput] = useState('');
+  const [userInput, setUserInput] = useState('');
   const [userInputError, setUserInputError] = useState('');
 
-  const [selectedOption, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-  const isAnswerUserInput = useMemo(() => {
-    return data.answer.length < 2;
-  }, [data.answer]);
+  const isAnswerUserInput = useMemo(() => data.answer.length < 2, [data.answer]);
 
   useEffect(() => {
     if (!response) {
@@ -35,37 +33,37 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, resp
     if (isAnswerUserInput) {
       setUserInput(response[0]);
       return;
-    } else {
-      setSelectedOptions(response);
     }
+
+    setSelectedOptions(response);
   }, [currentQuestion, response, isAnswerUserInput]);
 
   const handleNextClick = () => {
-    let response: SurveyResponse | null = null;
+    let newResponse: SurveyResponse | null = null;
 
     if (isAnswerUserInput) {
       setUserInputError('');
 
       // validate input type
-      if (data.answer[0].type === 'number' && !Number.isInteger(Number(useInput))) {
+      if (data.answer[0].type === 'number' && !Number.isInteger(Number(userInput))) {
         setUserInputError('Please enter a number');
         return;
       }
 
-      if (data.answer[0].type === 'string' && useInput.length < 1) {
+      if (data.answer[0].type === 'string' && userInput.length < 1) {
         setUserInputError('Please enter a valid input');
         return;
       }
-      response = {
-        [data.id]: [useInput]
+      newResponse = {
+        [data.id]: [userInput]
       };
     } else {
-      response = {
-        [data.id]: selectedOption
+      newResponse = {
+        [data.id]: selectedOptions
       };
     }
 
-    onNextClick(response);
+    onNextClick(newResponse);
   };
 
   const handleSelectOption = (value: string) => {
@@ -74,7 +72,7 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, resp
       return;
     }
 
-    const isOptionSelected = selectedOption.includes(value);
+    const isOptionSelected = selectedOptions.includes(value);
 
     if (isOptionSelected) {
       setSelectedOptions(prev => prev.filter(option => option !== value));
@@ -87,11 +85,11 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, resp
     <div
       key={data.id}
       className={cn('text-[18px] text-slate-600 -translate-x-[1000px] absolute top-1/2 ', {
-        'translate-x-0 bg-slate-100/60- min-w-[520px] w-fit px-5  pt-2.5 pb-4 rounded-md shadow-sm shadow-slate-300/70 ':
+        'translate-x-0 bg-slate-100/60- min-w-[560px] 2xl:min-w-[580 w-fit px-7  pt-3 pb-4 rounded-md shadow-sm shadow-slate-300 border border-slate-200/50':
           currentQuestion === data.id
       })}
     >
-      <p className='text-[18px] font-light text-slate-800'>
+      <p className='text-[16px] font-light text-slate-800'>
         <span className='font-normal tracking-wide text-slate-600/70'>Q{index}</span>. {data.question}
       </p>
       {/*  options */}
@@ -100,7 +98,7 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, resp
           <>
             <UserInput
               placeholder={data.answer[0].label}
-              value={useInput}
+              value={userInput}
               onChange={setUserInput}
               error={userInputError}
             />
@@ -110,7 +108,7 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, resp
           <Options
             optionList={data.answer.map(ans => ({ value: ans.id, label: ans.label }))}
             onSelect={handleSelectOption}
-            selected={selectedOption}
+            selected={selectedOptions}
           />
         )}
       </div>
@@ -123,7 +121,7 @@ const Question = ({ data, index, currentQuestion, onNextClick, onPrevClick, resp
           label='Next'
           onClick={handleNextClick}
           disabled={
-            (isAnswerUserInput && useInput.length < 1) || (!isAnswerUserInput && selectedOption.length < 1)
+            (isAnswerUserInput && userInput.length < 1) || (!isAnswerUserInput && selectedOptions.length < 1)
           }
         />
       </div>

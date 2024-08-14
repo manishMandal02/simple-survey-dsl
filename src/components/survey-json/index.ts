@@ -1,3 +1,3 @@
-export { default } from './SurveyJSON';
- 
-export * from './useSurveyParser';
+export { default } from './SurveyJson';
+
+export * from './useZodParser';

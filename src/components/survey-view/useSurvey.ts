@@ -1,5 +1,6 @@
-import { SurveyResponse } from './Survey';
 import { SurveyData } from '../survey-json';
+import { SurveyResponse } from './SurveyView';
+import { Answer } from '../../types/parser.types';
 
 type UseSurveyProps = {
   data: SurveyData;
@@ -61,21 +62,34 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
       // options
       const selectedOption = question?.answer.find(option => option.id === response[question.id][0]);
 
-      nextQuestion = selectedOption?.goto || 'end';
+      nextQuestion = selectedOption?.goto ?? 'end';
     }
 
     return nextQuestion;
   };
 
+  // map response to id (question, answer) to their labels
   const mapResponseToData = (response: SurveyResponse) => {
     const result: SurveyResponse = {};
 
     for (const res in response) {
+      // get question from id
       const qRes = data.questions.find(q => res === q.id);
+
+      const isUserInputRes = qRes?.answer?.length < 2 || false;
+
+      let answersLabel: string[] = response[res];
+
+      if (!isUserInputRes) {
+        // get answers from id
+        const answers = qRes?.answer.filter(ans => response[res].includes(ans.id)) as Answer[];
+
+        answersLabel = answers?.map(ans => ans.label);
+      }
 
       if (!qRes) continue;
 
-      result[qRes.question] = response[res];
+      result[qRes.question] = answersLabel;
     }
 
     return result;

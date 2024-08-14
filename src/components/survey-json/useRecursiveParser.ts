@@ -72,30 +72,25 @@ const tokenize = (input: string): Token[] => {
   return tokens;
 };
 
-const parser = (tokens: Token[]): Survey => {
-  console.log('🚀 ~ file: useRecursiveParser.ts:77 ~ parser ~ tokens:', tokens);
-
+const parse = (tokens: Token[]): Survey => {
   let currentPos = 0;
 
   const getCurrentToken = () => tokens[currentPos];
 
-  const consume = (type: string, errorMessage: string): Token => {
-    console.log('🚀 ~ file: useRecursiveParser.ts:78 ~ parser ~ currentPos:', currentPos);
-    console.log('🚀 ~ file: useRecursiveParser.ts:80 ~ parser ~ getCurrentToken():', getCurrentToken());
-
+  const consume = (type: string, expectedType?: string): Token => {
     if (getCurrentToken().type === type) {
       return tokens[currentPos++];
     }
 
-    throw new Error(errorMessage);
+    throw new Error(`Expected ${expectedType}`);
   };
 
   const parseSurvey = (): Survey => {
-    consume('LEFT_CURLY_BRACKET', 'Expected {');
+    consume('LEFT_CURLY_BRACKET', '{');
     const title = parseKeyValuePair('title');
-    consume('COMMA', 'Expected ,');
+    consume('COMMA', ',');
     const questions = parseKeyValuePair('questions');
-    consume('RIGHT_CURLY_BRACKET', 'Expected }');
+    consume('RIGHT_CURLY_BRACKET', '}');
 
     if (typeof title !== 'string') {
       throw new Error('Title must be a valid string');
@@ -114,12 +109,12 @@ const parser = (tokens: Token[]): Survey => {
   };
 
   const parseKeyValuePair = (expectedKey: string): BaseValueType => {
-    const key = consume('STRING', `Expected "${expectedKey}"`).value;
+    const key = consume('STRING', `"${expectedKey}"`).value;
 
     if (key !== expectedKey) {
-      throw new Error(`Expected key "${expectedKey}", got "${key}"`);
+      throw new Error(`key "${expectedKey}", got "${key}"`);
     }
-    consume('COLON', 'Expected :');
+    consume('COLON', ':');
     return parseValue();
   };
 
@@ -127,13 +122,13 @@ const parser = (tokens: Token[]): Survey => {
     const token = getCurrentToken().type;
     switch (token) {
       case 'STRING':
-        return consume('STRING', 'Expected string').value;
+        return consume('STRING', 'string').value;
       case 'NUMBER':
-        return parseFloat(consume('NUMBER', 'Expected number').value);
+        return parseFloat(consume('NUMBER', 'number').value);
       case 'BOOLEAN':
-        return consume('BOOLEAN', 'Expected boolean').value === 'true';
+        return consume('BOOLEAN', 'boolean').value === 'true';
       case 'NULL':
-        consume('NULL', 'Expected null');
+        consume('NULL', 'null');
         return null;
       case 'LEFT_CURLY_BRACKET':
         return parseObject();
@@ -147,31 +142,31 @@ const parser = (tokens: Token[]): Survey => {
   const parseObject = () => {
     const obj: Record<string, unknown> = {};
 
-    consume('LEFT_CURLY_BRACKET', 'Expected {');
+    consume('LEFT_CURLY_BRACKET', '{');
 
     while (getCurrentToken().type !== 'RIGHT_CURLY_BRACKET') {
-      const key = consume('STRING', 'Expected string').value;
-      consume('COLON', 'Expected :');
+      const key = consume('STRING', 'string').value;
+      consume('COLON', ':');
       obj[key] = parseValue();
       if (getCurrentToken().type === 'COMMA') {
-        consume('COMMA', 'Expected ,');
+        consume('COMMA', ',');
       }
     }
 
-    consume('RIGHT_CURLY_BRACKET', 'Expected }');
+    consume('RIGHT_CURLY_BRACKET', '}');
     return obj;
   };
 
   const parseArray = () => {
     const arr: unknown[] = [];
-    consume('LEFT_SQUARE_BRACKET', 'Expected [');
+    consume('LEFT_SQUARE_BRACKET', '[');
     while (getCurrentToken().type !== 'RIGHT_SQUARE_BRACKET') {
       arr.push(parseValue());
       if (getCurrentToken().type === 'COMMA') {
-        consume('COMMA', 'Expected ,');
+        consume('COMMA', ',');
       }
     }
-    consume('RIGHT_SQUARE_BRACKET', 'Expected ]');
+    consume('RIGHT_SQUARE_BRACKET', ']');
     return arr;
   };
 
@@ -207,14 +202,20 @@ const validateSurvey = (survey: Survey) => {
       }
 
       if (answer.goto && answer.end) {
-        throw new Error(`goto and end statements should not co-exist in answer: ${question.id}`);
+        throw new Error(`Route statements should not co-exist in answer: ${question.id}`);
+      }
+      if (!['option', 'number', 'string'].includes(answer.type)) {
+        throw new Error(
+          `Answer type in answer ${answer.id} must be either "number", "string" or "option" in question ${question.id}`
+        );
       }
 
       if (answer.type === 'option' && !answer.goto && !answer.end) {
-        throw new Error(`Option type answer must have goto or end: ${answer.id} in question ${question.id}`);
+        throw new Error(`Option type in answer ${answer.id} must have route in question ${question.id}`);
       }
+
       if (answer.type === 'string' && !answer.goto && !answer.end) {
-        throw new Error(`String type answer must have goto or end: ${answer.id} in question ${question.id}`);
+        throw new Error(`String type in answer ${answer.id} must have route in question ${question.id}`);
       }
     }
 
@@ -228,9 +229,7 @@ const validateSurvey = (survey: Survey) => {
       }
 
       if (gotoRoutes.size > 1 || (gotoRoutes.size > 0 && hasEnd)) {
-        throw new Error(
-          `Multi-select options should have either same goto routes or end statement in question: ${question.id}`
-        );
+        throw new Error(`Multi-select options should have same route statement in question: ${question.id}`);
       }
     }
 
@@ -245,14 +244,16 @@ const validateSurvey = (survey: Survey) => {
       }
       for (const condition of question.conditions) {
         if (condition.goto && !questionIds.has(condition.goto)) {
-          throw new Error(`Invalid goto in condition: ${condition.goto} in question ${question.id}`);
+          throw new Error(`Invalid goto ${condition.goto} in condition of question: ${question.id}`);
         }
         if (!condition.goto && !condition.end) {
-          throw new Error(`Condition must have goto or end statement: ${question.id}`);
+          throw new Error(`Must have a route in condition of question: ${question.id}`);
         }
 
         if (condition.goto && condition.end) {
-          throw new Error(`goto and end statements should not co-exist in answer: ${question.id}`);
+          throw new Error(
+            `goto and end statements should not co-exist in condition of question: ${question.id}`
+          );
         }
       }
     }
@@ -261,11 +262,11 @@ const validateSurvey = (survey: Survey) => {
 
 export const useRecursiveParse = () => {
   // recursive parser
-  const recursiveParser = (surveyData: string): [Survey | null, string[] | null] => {
+  const recursiveParser = (surveyData: string): [Survey | null, string | null] => {
     const tokens = tokenize(surveyData);
 
     try {
-      const parsedSurvey = parser(tokens);
+      const parsedSurvey = parse(tokens);
 
       // validate the parsed survey data
       // throws error for invalid rules
@@ -273,9 +274,7 @@ export const useRecursiveParse = () => {
 
       return [parsedSurvey, null];
     } catch (err) {
-      console.log('🚀 ~ file: useRecursiveParser.ts:264 ~ recursiveParser ~ err:', err);
-
-      return [null, [(err as Error).message]];
+      return [null, (err as Error).message];
     }
   };
 

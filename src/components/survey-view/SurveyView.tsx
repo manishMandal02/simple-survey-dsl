@@ -14,17 +14,17 @@ type Props = {
   data: SurveyData;
 };
 
-const Survey = ({ data }: Props) => {
+const SurveyView = ({ data }: Props) => {
   const [currentQuestion, setCurrentQuestion] = useState('');
 
   const [questionNavigation, setQuestionNavigation] = useState<string[]>([]);
 
-  const [questionRes, setQuestionsRes] = useState<SurveyResponse>({});
+  const [questionRes, setQuestionRes] = useState<SurveyResponse>({});
 
   const handleResetSurvey = () => {
     setCurrentQuestion('');
     setQuestionNavigation([]);
-    setQuestionsRes({});
+    setQuestionRes({});
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Survey = ({ data }: Props) => {
 
     updatedResponse[currentQuestion] = response[currentQuestion];
 
-    setQuestionsRes(updatedResponse);
+    setQuestionRes(updatedResponse);
 
     const nextQuestion = getNextQuestion(response);
 
@@ -64,26 +64,29 @@ const Survey = ({ data }: Props) => {
   };
 
   return (
-    <div className='w-full h-full max-h-[100%] flex flex-col items-center overflow-y-auto'>
+    <div className='w-full h-full max-h-[100%] flex flex-col items-center '>
       {/* survey start */}
-      <div className='mt-12'>
-        <h2 className='text-center text-[22px] text-slate-600/80 tracking-wide'>{data.title}</h2>
-        <hr className='h-[1px] mt-2 mb-3 border-none bg-slate-200/60 rounded-md w-[100%]  mx-auto' />
-        {!currentQuestion ? <Button label='Start Survey' onClick={handleStartSurvey} /> : null}
+      <div className=' flex flex-col items-center justify-center w-full sticky top-0 bg-slate-50'>
+        <h2 className='text-center text-[20px] text-slate-600 font-light tracking-wide py-5'>{data.title}</h2>
+        <hr className='h-[1px]  border-none bg-slate-200/80 rounded-md w-[100%]  mx-auto' />
       </div>
-      <div className='relative mt-10 w-full flex items-center justify-center'>
-        {data.questions.map((question, idx) => (
-          <Question
-            key={question.id}
-            data={question}
-            index={idx + 1}
-            response={questionRes[question.id]}
-            currentQuestion={currentQuestion}
-            onNextClick={handleNextQuestion}
-            onPrevClick={handlePreviousQuestion}
-          />
-        ))}
-      </div>
+      {!currentQuestion ? <Button label='Start Survey' onClick={handleStartSurvey} classes='mt-16' /> : null}
+
+      {currentQuestion !== 'end' ? (
+        <div className='relative mt-20 w-full flex items-center justify-center'>
+          {data.questions.map((question, idx) => (
+            <Question
+              key={question.id}
+              data={question}
+              index={idx + 1}
+              response={questionRes[question.id]}
+              currentQuestion={currentQuestion}
+              onNextClick={handleNextQuestion}
+              onPrevClick={handlePreviousQuestion}
+            />
+          ))}
+        </div>
+      ) : null}
 
       {/* survey end */}
       {currentQuestion === 'end' ? (
@@ -93,4 +96,4 @@ const Survey = ({ data }: Props) => {
   );
 };
 
-export default Survey;
+export default SurveyView;

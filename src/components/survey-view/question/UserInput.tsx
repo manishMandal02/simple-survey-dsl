@@ -11,7 +11,8 @@ const UserInput = ({ placeholder, value, onChange, error }: Props) => {
     <input
       autoFocus
       className={cn(
-        'w-full py-2 px-3 bg-slate-200/40 text-slate-800/80 outline-none  rounded-md border border-slate-400/40 focus-within:border-slate-400 transition-colors duration-300 placeholder:text-slate-400/70',
+        `w-full py-2 px-3 bg-slate-200/40 text-slate-800/80 outline-none  rounded-md border border-slate-400/40 
+        focus-within:border-slate-400 transition-colors duration-300 placeholder:text-slate-400/70 placeholder:text-[15px]`,
         { 'border-rose-200/40': error }
       )}
       type='text'
