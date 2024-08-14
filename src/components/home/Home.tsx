@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import SurveyJson from '../survey-json';
 import { Survey } from '../../types/parser.types';
 import SurveyView from '../survey-view';
+import { SurveyJson } from '../survey-json';
 
 const Home = () => {
   const [surveyData, setSurveyData] = useState<Survey>();

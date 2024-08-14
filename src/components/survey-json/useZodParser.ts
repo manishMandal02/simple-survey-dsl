@@ -28,7 +28,7 @@ const AnswerSchema = z
       if (data.type === 'option' || data.type === 'string') {
         if (!hasRouteStatement) {
           return false;
-        }
+        } 
       }
 
       // goto/end should not co-exists
