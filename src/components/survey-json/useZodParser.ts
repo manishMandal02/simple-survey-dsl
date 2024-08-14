@@ -1,3 +1,4 @@
+import { ConditionOperator, ConditionOperators } from './../../types/parser.types';
 import { z } from 'zod';
 import { Survey } from '../../types/parser.types';
 
@@ -22,7 +23,7 @@ const AnswerSchema = z
   .refine(
     data => {
       // checks that a goto or an end statement is added to each option or user input (string)
-      const hasRouteStatement = data?.goto || data?.end;
+      const hasRouteStatement = data?.goto ?? data?.end;
 
       if (data.type === 'option' || data.type === 'string') {
         if (!hasRouteStatement) {
@@ -40,8 +41,6 @@ const AnswerSchema = z
     { message: ParserErrorMessage.answer }
   );
 
-export const ConditionOperators = ['lt', 'lte', 'gt', 'gte', 'eq'];
-
 const ConditionSchema = z
   .object({
     goto: z.string().optional(),
@@ -52,7 +51,7 @@ const ConditionSchema = z
     data => {
       const keys = Object.keys(data);
       // checks that 1 conditional operator is used
-      const operators = keys.filter(key => ConditionOperators.includes(key));
+      const operators = keys.filter(key => ConditionOperators.includes(key as ConditionOperator));
       // must goto/end statement per conditions
       const hasRouteStatement = keys.includes('goto') || keys.includes('end');
 
@@ -129,11 +128,7 @@ const QuestionSchema = z
       if (data.multiselect) {
         const allGOTO = data.answer.filter(ans => ans.goto)?.map(ans => ans.goto);
 
-        console.log('🚀 ~ file: useSurveyParser.ts:99 ~ allGOTO:', allGOTO);
-
         const allEND = data.answer.filter(ans => ans.end);
-
-        console.log('🚀 ~ file: useSurveyParser.ts:101 ~ allEND:', allEND);
 
         if (allGOTO.length !== data.answer.length && allEND.length !== data.answer.length) {
           return false;
@@ -179,8 +174,6 @@ const SurveySchema = z
 
       const matchedStatements = data.questions.filter(q => gotoStatements.includes(q.id));
 
-      console.log('🚀 ~ file: useSurveyParser.ts:149 ~ matchedStatements:', matchedStatements);
-
       if (
         matchedStatements.length === data.questions.length ||
         matchedStatements.length === data.questions.length - 1
@@ -200,11 +193,8 @@ export const useZodParser = () => {
     const res = SurveySchema.safeParse(JSON.parse(surveyData));
 
     if (res.success) {
-      // console.log('parsed success ✅', res.data);
       return [res.data as Survey, null];
     } else {
-      // console.log('parsed failed ❌', res.error.issues);
-
       // get all errors/issues
       const issues = res.error.issues.map(err => err.message);
       return [null, issues[0]];

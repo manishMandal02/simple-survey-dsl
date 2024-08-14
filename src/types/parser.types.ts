@@ -38,8 +38,12 @@ export interface Answer {
   end?: boolean;
 }
 
+export const ConditionOperators = ['gt', 'gte', 'lt', 'lte', 'eq'] as const;
+
+export type ConditionOperator = (typeof ConditionOperators)[number];
+
 export type Condition = {
-  [key in 'gt' | 'gte' | 'lt' | 'lte' | 'eq']?: string;
+  [key in ConditionOperator]?: string;
 } & {
   goto?: string;
   end?: boolean;

@@ -31,6 +31,7 @@ const validateNumberConditions = (condition: Record<string, string | boolean>, r
 };
 
 export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
+  // next question router
   const getNextQuestion = (response: SurveyResponse) => {
     let nextQuestion = '';
 
@@ -42,7 +43,7 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
         return 'end';
       }
       //   user input type text
-      nextQuestion = question.answer[0]?.goto || '';
+      nextQuestion = question.answer[0]?.goto ?? '';
 
       //    user input type number with condition
       if (!nextQuestion && question.conditions) {
@@ -51,7 +52,7 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
           const success = validateNumberConditions(condition, Number(response[question.id][0]));
 
           if (success) {
-            nextQuestion = condition.goto || 'end';
+            nextQuestion = condition.goto ?? 'end';
             break;
           }
         }
@@ -76,7 +77,7 @@ export const useSurvey = ({ data, currentQuestion }: UseSurveyProps) => {
       // get question from id
       const qRes = data.questions.find(q => res === q.id);
 
-      const isUserInputRes = qRes?.answer?.length < 2 || false;
+      const isUserInputRes = (qRes?.answer.length ?? 0) < 2 || false;
 
       let answersLabel: string[] = response[res];
 

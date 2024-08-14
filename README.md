@@ -90,7 +90,7 @@ pnpm run dev
 
 - core: `React + Vite + Typescript + Tailwind CSS`
 - others:
-  - `zod` used for schema definitions and parsing of json with the same schema
+  - `zod` used for building a zod parser
   - `@mantine/core` used for text area with json support
   - `clsx` + `tailwind-merge` to merge tailwind classes and better readability
   -
@@ -106,17 +106,19 @@ pnpm run dev
     └── src
         └── 📁 components
             └── 📁 home        # home/index page
-            └── 📁 survey
+            └── 📁 survey-view
                 └── 📁 question  # components for question
                 └── useSurvey.ts  # logics for response, routing, etc.
                 └── SurveyResult.tsx  # survey result
-                └── Survey.tsx  # entry point t survey UI
+                └── SurveyView.tsx  # entry point t survey UI
             └── 📁 survey-json
                 └── SurveyJSON.tsx  # json textarea UI
-                └── useSurveyParser.ts  # survey schema and parser
+                └── useZodParser.ts  # zod parser
+                └── useRecursiveParser.ts  # recursive descent parser
         └── 📁 utils
-            └── cn.ts             # class names merger
-            └── validate-json.ts  # class names merger
+            └── cn.ts
+            └── validate-json.ts
+            └── parse-json-file.ts
 
         └── App.tsx # entry point
 
